@@ -1,0 +1,82 @@
+KMP
+Str1 :- substring - length n
+Mas :- main string - length n2
+// calculate the prefix waala array
+while(j<n)
+        if(str1[i]==str1[j])
+            tmp[j++]=++i ;
+        else
+            if(i==0)
+                tmp[j++]=0;
+            else
+                i = tmp[i-1];
+
+//check for substring - ans = 0 if not a substring else ans = 1
+while(i<n2)
+        if(mas[i]==str1[j])
+            if(j==n-1)
+                ans=1;break;
+            else
+                i++;j++;
+        else
+            if(j==0)
+                i++;
+            else
+                j = tmp[j-1];
+
+Z-String
+void z_string(char str[])
+	int size=strlen(str);	int i,l,r,k;
+	arr[0]=size;	l=0;r=0;
+	for(i=1;i<size;i++)
+		if(i>r)
+			l=i;r=i;
+			while(r<size && str[r-l]==str[r])
+				r++;
+			arr[i]=r-l;
+			r--;
+		else
+			k=i-l;
+			if(arr[k]<r-i+1)
+				arr[i]=arr[k];
+			else
+				l=i;
+				while(r<size && str[r-l]==str[r])
+					r++;
+				arr[i]=r-l;
+				r--;
+
+Euler's tour
+Do dfs, store levels of each node, store first occurance of each node.
+lca of node a,b is the min value in the level array in range first[a] to first[b] ( using segment tree queries)
+
+Segment Trees
+
+int build(int l,int r,int i)
+	if(l==r)
+		seg[i] = arr[l];
+		return arr[l];
+	int mid = (l+r)/2 ;
+	seg[i] = min(build(l,mid,2*i+1),build(mid+1,r,2*i+2));
+	return seg[i];
+
+int query(int l, int r, int i, int a, int b)
+  if(b < l || a > r)
+  	return INT_MAX ;
+  if(l==a && r==b)
+		return seg[i];
+  int mid = (l+r)/2;
+  int b1=min(mid,b);
+  int a1=max(a,mid+1);
+  return min(query(l,mid,2*i+1,a,mid),query(mid+1,r,2*i+2,mid+1,b));
+
+int update(int l,int r,int i,int x,int v)
+  if(l==r && l==x)
+  	seg[i] = v;
+  	return v;
+  int mid = (l+r)/2 ;
+  if(x>mid)
+  	seg[i] = min(seg[2*i+1],update(mid+1,r,2*i+2,x,v));
+  else
+  	seg[i] = min(seg[2*i+2],update(l,mid,2*i+1,x,v));
+  return seg[i];
